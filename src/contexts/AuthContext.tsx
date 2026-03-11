@@ -2,6 +2,19 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { User } from '../types';
 import { authAPI } from '../services/api';
 
+/**
+ * Fast Refresh Tip: Vite prefers that you don't export interfaces 
+ * from the same file as components. If you still get HMR warnings,
+ * move these interfaces to your ../types/index.ts file.
+ */
+interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  phone?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -10,14 +23,6 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
-}
-
-interface RegisterData {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-  phone?: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,10 +37,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (token) {
         try {
           const response = await authAPI.getUser();
-          setUser(response.data.user);
+          // Adjust based on your API response structure
+          const userData = response.data.user || response.data;
+          setUser(userData);
         } catch (error) {
+          console.error("Auth initialization failed:", error);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
+          setUser(null);
         }
       }
       setIsLoading(false);
@@ -66,7 +75,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       await authAPI.logout();
     } catch (error) {
-      // Ignore error
+      console.warn("Logout request failed on server, clearing local state anyway.");
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -79,18 +88,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
+  const value = {
+    user,
+    isAuthenticated: !!user,
+    isLoading,
+    login,
+    register,
+    logout,
+    updateUser,
+  };
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login,
-        register,
-        logout,
-        updateUser,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,15 +1,27 @@
-import axios, { AxiosInstance, AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+/**
+ * FIX: Use the Proxy path.
+ * Your vite.config.ts defines a proxy for '/api', 
+ * so we use '/api' as the base.
+ */
+const API_URL = '/api';
 
-const api: AxiosInstance = axios.create({
+const api = axios.create({
   baseURL: API_URL,
+  withCredentials: true, // Required for Laravel Sanctum session cookies
   headers: {
-    'Content-Type': 'application/json',
     'Accept': 'application/json',
-  },
-  withCredentials: true,
+    'Content-Type': 'application/json',
+  }
 });
+
+/**
+ * NECESSITY: CSRF Handshake
+ * Laravel Sanctum requires this before any POST/PUT/DELETE request.
+ */
+export const getCsrfToken = () => 
+  axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true });
 
 // Request interceptor to add auth token
 api.interceptors.request.use(
@@ -23,7 +35,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle errors
+// Response interceptor to handle session expiration
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
@@ -38,153 +50,75 @@ api.interceptors.response.use(
 
 // Auth API
 export const authAPI = {
-  login: (email: string, password: string) =>
-    api.post('/login', { email, password }),
+  login: async (email: string, password: string) => {
+    await getCsrfToken(); // Necessary for Sanctum
+    return api.post('/login', { email, password });
+  },
   
-  register: (data: { name: string; email: string; password: string; password_confirmation: string; phone?: string }) =>
-    api.post('/register', data),
+  register: async (data: { name: string; email: string; password: string; password_confirmation: string; phone?: string }) => {
+    await getCsrfToken(); // Necessary for Sanctum
+    return api.post('/register', data);
+  },
   
   logout: () =>
     api.post('/logout'),
   
   getUser: () =>
-    api.get('/user'),
+    api.get('/me'),
   
-  updateProfile: (data: { name?: string; phone?: string; current_password?: string; password?: string; password_confirmation?: string }) =>
+  updateProfile: (data: any) =>
     api.put('/profile', data),
-  
-  getUsers: (params?: { role?: string; search?: string }) =>
-    api.get('/users', { params }),
-  
-  toggleUserStatus: (userId: number) =>
-    api.patch(`/users/${userId}/toggle-status`),
 };
 
 // Category API
 export const categoryAPI = {
-  getAll: (params?: { active_only?: boolean }) =>
-    api.get('/categories', { params }),
-  
-  getById: (id: number) =>
-    api.get(`/categories/${id}`),
-  
-  create: (data: { name: string; description?: string; icon?: string; sort_order?: number }) =>
-    api.post('/categories', data),
-  
-  update: (id: number, data: Partial<{ name: string; description: string; icon: string; is_active: boolean; sort_order: number }>) =>
-    api.put(`/categories/${id}`, data),
-  
-  delete: (id: number) =>
-    api.delete(`/categories/${id}`),
-  
-  toggleStatus: (id: number) =>
-    api.patch(`/categories/${id}/toggle-status`),
+  getAll: () => api.get('/categories'),
+  getById: (id: number) => api.get(`/categories/${id}`),
+  create: (data: any) => api.post('/categories', data),
+  update: (id: number, data: any) => api.put(`/categories/${id}`, data),
+  delete: (id: number) => api.delete(`/categories/${id}`),
 };
 
 // Menu API
 export const menuAPI = {
-  getAll: (params?: { category_id?: number; available_only?: boolean; featured?: boolean; low_stock?: boolean; search?: string; sort_by?: string; sort_order?: string }) =>
-    api.get('/menu-items', { params }),
-  
-  getById: (id: number) =>
-    api.get(`/menu-items/${id}`),
-  
-  getLowStock: () =>
-    api.get('/menu-items/low-stock'),
-  
-  create: (data: FormData) =>
-    api.post('/menu-items', data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-  
-  update: (id: number, data: FormData) =>
-    api.post(`/menu-items/${id}`, data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-  
-  delete: (id: number) =>
-    api.delete(`/menu-items/${id}`),
-  
-  toggleAvailability: (id: number) =>
-    api.patch(`/menu-items/${id}/toggle-availability`),
-  
-  toggleFeatured: (id: number) =>
-    api.patch(`/menu-items/${id}/toggle-featured`),
+  getAll: (params?: any) => api.get('/menu-items', { params }),
+  getById: (id: number) => api.get(`/menu-items/${id}`),
+  create: (data: any) => api.post('/menu-items', data),
+  update: (id: number, data: any) => api.put(`/menu-items/${id}`, data),
+  delete: (id: number) => api.delete(`/menu-items/${id}`),
+  toggleAvailability: (id: number) => api.patch(`/menu-items/${id}/toggle-availability`),
 };
 
 // Order API
 export const orderAPI = {
-  getAll: (params?: { status?: string; user_id?: number; date_from?: string; date_to?: string; search?: string }) =>
-    api.get('/orders', { params }),
-  
-  getById: (id: number) =>
-    api.get(`/orders/${id}`),
-  
-  getQueue: () =>
-    api.get('/orders/queue'),
-  
-  getMyOrders: () =>
-    api.get('/orders/my-orders'),
-  
-  create: (data: {
-    items: { menu_item_id: number; quantity: number; special_instructions?: string }[];
-    customer_name?: string;
-    customer_phone?: string;
-    payment_method: 'cash' | 'card' | 'digital_wallet';
-    notes?: string;
-  }) =>
-    api.post('/orders', data),
-  
-  updateStatus: (id: number, status: string) =>
-    api.patch(`/orders/${id}/status`, { status }),
-  
-  delete: (id: number) =>
-    api.delete(`/orders/${id}`),
+  getAll: (params?: any) => api.get('/orders', { params }),
+  getById: (id: number) => api.get(`/orders/${id}`),
+  getQueue: () => api.get('/order-queue'),
+  create: (data: any) => api.post('/orders', data),
+  updateStatus: (id: number, status: string) => 
+    api.put(`/orders/${id}/status`, { status }),
+  delete: (id: number) => api.delete(`/orders/${id}`),
 };
 
 // Inventory API
 export const inventoryAPI = {
-  getAll: (params?: { low_stock?: boolean; category_id?: number; search?: string }) =>
-    api.get('/inventory', { params }),
-  
-  getLogs: (params?: { menu_item_id?: number; change_type?: string; date_from?: string; date_to?: string }) =>
-    api.get('/inventory/logs', { params }),
-  
-  getLowStockAlerts: () =>
-    api.get('/inventory/low-stock-alerts'),
-  
-  restock: (menuItemId: number, quantity: number, reason?: string) =>
-    api.post(`/inventory/${menuItemId}/restock`, { quantity, reason }),
-  
-  adjustStock: (menuItemId: number, newQuantity: number, reason: string) =>
-    api.post(`/inventory/${menuItemId}/adjust`, { new_quantity: newQuantity, reason }),
-  
-  bulkRestock: (items: { menu_item_id: number; quantity: number }[], reason?: string) =>
-    api.post('/inventory/bulk-restock', { items, reason }),
+  getAll: () => api.get('/inventory'),
+  getLogs: () => api.get('/inventory/logs'),
+  getLowStockAlerts: () => api.get('/inventory/low-stock'),
+  restock: (id: number, quantity: number, reason?: string) => 
+    api.post(`/inventory/${id}/restock`, { quantity, reason }),
+  adjustStock: (id: number, newQuantity: number, reason: string) => 
+    api.post(`/inventory/${id}/adjust`, { new_quantity: newQuantity, reason }),
 };
 
 // Report API
 export const reportAPI = {
-  getDashboard: (params?: { date_from?: string; date_to?: string }) =>
-    api.get('/reports/dashboard', { params }),
-  
-  getSalesByDay: (params?: { date_from?: string; date_to?: string }) =>
-    api.get('/reports/sales-by-day', { params }),
-  
-  getSalesByCategory: (params?: { date_from?: string; date_to?: string }) =>
-    api.get('/reports/sales-by-category', { params }),
-  
-  getTopSellingItems: (params?: { date_from?: string; date_to?: string; limit?: number }) =>
-    api.get('/reports/top-selling-items', { params }),
-  
-  getOrderTrends: (params?: { days?: number }) =>
-    api.get('/reports/order-trends', { params }),
-  
-  getPaymentMethods: (params?: { date_from?: string; date_to?: string }) =>
-    api.get('/reports/payment-methods', { params }),
-  
-  getHourlySales: (params?: { date?: string }) =>
-    api.get('/reports/hourly-sales', { params }),
+  getDashboard: () => api.get('/reports/dashboard-summary'), 
+  getSalesByDay: (params?: any) => api.get('/reports/sales-by-date', { params }),
+  getTopSellingItems: () => api.get('/reports/best-selling'),
+  getSalesByCategory: () => api.get('/reports/sales-by-category'),
+  getOrderTrends: () => api.get('/reports/order-trend'),
+  exportReport: () => api.get('/reports/export'),
 };
 
 export default api;

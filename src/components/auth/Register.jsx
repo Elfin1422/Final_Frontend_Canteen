@@ -1,7 +1,6 @@
 /**
  * Register.jsx
- * New user registration form with full client-side validation.
- * On success, auto-logs in and redirects to role dashboard.
+ * Split-panel registration page — creates Customer accounts only.
  */
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -12,30 +11,24 @@ export default function Register() {
   const { login }  = useAuth();
   const navigate   = useNavigate();
 
-  const [form, setForm] = useState({
-    name: '', email: '', password: '', password_confirmation: '', role: 'customer',
-  });
+  const [form, setForm]         = useState({ name: '', email: '', password: '', password_confirmation: '' });
   const [errors, setErrors]     = useState({});
   const [apiError, setApiError] = useState('');
   const [loading, setLoading]   = useState(false);
 
-  /** Validate all fields; return map of field → error string */
   const validate = (f) => {
     const e = {};
-    if (!f.name.trim())                   e.name = 'Full name is required.';
-    else if (f.name.trim().length < 2)    e.name = 'Name must be at least 2 characters.';
-
-    if (!f.email)                              e.email = 'Email is required.';
-    else if (!/\S+@\S+\.\S+/.test(f.email))   e.email = 'Enter a valid email address.';
-
-    if (!f.password)                           e.password = 'Password is required.';
-    else if (f.password.length < 8)            e.password = 'Password must be at least 8 characters.';
+    if (!f.name.trim())                  e.name = 'Full name is required.';
+    else if (f.name.trim().length < 2)   e.name = 'Name must be at least 2 characters.';
+    if (!f.email)                             e.email = 'Email is required.';
+    else if (!/\S+@\S+\.\S+/.test(f.email))  e.email = 'Enter a valid email address.';
+    if (!f.password)                          e.password = 'Password is required.';
+    else if (f.password.length < 8)           e.password = 'Password must be at least 8 characters.';
     else if (!/[A-Z]/.test(f.password) && !/[0-9]/.test(f.password))
-                                               e.password = 'Include at least one number or uppercase letter.';
-
-    if (!f.password_confirmation)              e.password_confirmation = 'Please confirm your password.';
+                                              e.password = 'Include at least one number or uppercase letter.';
+    if (!f.password_confirmation)             e.password_confirmation = 'Please confirm your password.';
     else if (f.password !== f.password_confirmation)
-                                               e.password_confirmation = 'Passwords do not match.';
+                                              e.password_confirmation = 'Passwords do not match.';
     return e;
   };
 
@@ -47,16 +40,11 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError('');
-
     const fieldErrors = validate(form);
-    if (Object.keys(fieldErrors).length) {
-      setErrors(fieldErrors);
-      return;
-    }
-
+    if (Object.keys(fieldErrors).length) { setErrors(fieldErrors); return; }
     setLoading(true);
     try {
-      await api.post('/register', form);
+      await api.post('/register', { ...form, role: 'customer' });
       const user = await login(form.email, form.password);
       navigate(`/${user.role}`);
     } catch (err) {
@@ -68,84 +56,91 @@ export default function Register() {
 
   return (
     <div className="login-root">
-      <div className="login-card" style={{ maxWidth: 420 }}>
-        <div className="login-brand">
-          <span className="login-icon">🍽️</span>
+      <div className="login-split">
+
+        {/* ── Left: Maroon brand panel ── */}
+        <div className="login-brand-panel">
+          <span className="brand-icon">🍽️</span>
           <h1>CanteenPOS</h1>
-          <p>Create your account</p>
+          <p className="brand-sub">Join the school canteen system and order your favorite meals online.</p>
+          <div className="brand-badge">👤 Customer Registration</div>
+          <div className="brand-dots">
+            <span /><span /><span /><span />
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form" noValidate>
-          {apiError && <div className="alert-error">{apiError}</div>}
+        {/* ── Right: Form panel ── */}
+        <div className="login-form-panel">
+          <p className="form-title">Create account</p>
+          <p className="form-subtitle">Fill in your details to get started</p>
 
-          <div className="field">
-            <label>Full Name</label>
-            <input
-              type="text"
-              value={form.name}
-              onChange={handleChange('name')}
-              placeholder="Juan dela Cruz"
-              className={errors.name ? 'input-error' : ''}
-              autoFocus
-            />
-            {errors.name && <span className="field-error">{errors.name}</span>}
+          <form onSubmit={handleSubmit} className="login-form" noValidate>
+            {apiError && <div className="alert-error">{apiError}</div>}
+
+            <div className="field">
+              <label>Full Name</label>
+              <input
+                type="text"
+                value={form.name}
+                onChange={handleChange('name')}
+                placeholder="Juan dela Cruz"
+                className={errors.name ? 'input-error' : ''}
+                autoFocus
+              />
+              {errors.name && <span className="field-error">{errors.name}</span>}
+            </div>
+
+            <div className="field">
+              <label>Email Address</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={handleChange('email')}
+                placeholder="you@canteen.com"
+                className={errors.email ? 'input-error' : ''}
+              />
+              {errors.email && <span className="field-error">{errors.email}</span>}
+            </div>
+
+            <div className="field">
+              <label>Password</label>
+              <input
+                type="password"
+                value={form.password}
+                onChange={handleChange('password')}
+                placeholder="Min. 8 characters"
+                className={errors.password ? 'input-error' : ''}
+              />
+              {errors.password && <span className="field-error">{errors.password}</span>}
+            </div>
+
+            <div className="field">
+              <label>Confirm Password</label>
+              <input
+                type="password"
+                value={form.password_confirmation}
+                onChange={handleChange('password_confirmation')}
+                placeholder="Re-enter password"
+                className={errors.password_confirmation ? 'input-error' : ''}
+              />
+              {errors.password_confirmation && <span className="field-error">{errors.password_confirmation}</span>}
+            </div>
+
+            <button type="submit" className="btn-primary btn-full" disabled={loading}>
+              {loading ? 'Creating account…' : 'Create Account'}
+            </button>
+          </form>
+
+          <div className="login-demo" style={{ marginTop: '1.25rem' }}>
+            <p style={{ fontSize: '.85rem', color: 'var(--muted)' }}>
+              Already have an account?{' '}
+              <Link to="/login" style={{ color: '#6b0f1a', fontWeight: 600 }}>
+                Sign in
+              </Link>
+            </p>
           </div>
-
-          <div className="field">
-            <label>Email Address</label>
-            <input
-              type="email"
-              value={form.email}
-              onChange={handleChange('email')}
-              placeholder="you@canteen.com"
-              className={errors.email ? 'input-error' : ''}
-            />
-            {errors.email && <span className="field-error">{errors.email}</span>}
-          </div>
-
-          <div className="field">
-            <label>Role</label>
-            <select value={form.role} onChange={handleChange('role')}>
-              <option value="customer">Customer</option>
-              <option value="cashier">Cashier</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <div className="field">
-            <label>Password</label>
-            <input
-              type="password"
-              value={form.password}
-              onChange={handleChange('password')}
-              placeholder="Min. 8 characters"
-              className={errors.password ? 'input-error' : ''}
-            />
-            {errors.password && <span className="field-error">{errors.password}</span>}
-          </div>
-
-          <div className="field">
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              value={form.password_confirmation}
-              onChange={handleChange('password_confirmation')}
-              placeholder="Re-enter password"
-              className={errors.password_confirmation ? 'input-error' : ''}
-            />
-            {errors.password_confirmation && <span className="field-error">{errors.password_confirmation}</span>}
-          </div>
-
-          <button type="submit" className="btn-primary btn-full" disabled={loading}>
-            {loading ? 'Creating account…' : 'Create Account'}
-          </button>
-        </form>
-
-        <div className="login-demo" style={{ marginTop: '1rem' }}>
-          <p>Already have an account?{' '}
-            <Link to="/login" style={{ color: 'var(--brand)', fontWeight: 500 }}>Sign in</Link>
-          </p>
         </div>
+
       </div>
     </div>
   );

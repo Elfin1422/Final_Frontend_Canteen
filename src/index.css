@@ -92,24 +92,88 @@ body {
 .topbar-title { font-size: 1.15rem; font-weight: 600; }
 .topbar-time  { font-size: .8rem; color: var(--muted); }
 
-/* ── Login ── */
+/* ── Login / Register ── */
 .login-root {
-  min-height: 100vh; background: var(--bg);
-  display: flex; align-items: center; justify-content: center; padding: 1rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
 }
-.login-card {
-  background: var(--surface); border-radius: 16px;
-  box-shadow: var(--shadow); padding: 2.5rem 2rem;
-  width: 100%; max-width: 380px;
+
+/* Left panel — maroon brand side */
+.login-root::before {
+  content: '';
+  display: none;
 }
-.login-brand    { text-align: center; margin-bottom: 2rem; }
-.login-icon     { font-size: 2.5rem; }
-.login-brand h1 { font-size: 1.5rem; font-weight: 600; margin: .5rem 0 .25rem; }
-.login-brand p  { color: var(--muted); font-size: .88rem; }
-.login-form     { display: flex; flex-direction: column; gap: 1rem; }
-.login-demo     { margin-top: 1.5rem; text-align: center; }
+
+/* Full-page split layout */
+.login-split {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.login-brand-panel {
+  flex: 1;
+  background: #6b0f1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  color: #fff;
+}
+
+.login-brand-panel .brand-icon  { font-size: 4rem; margin-bottom: 1rem; }
+.login-brand-panel h1           { font-size: 2.2rem; font-weight: 700; margin-bottom: .5rem; letter-spacing: -.5px; }
+.login-brand-panel .brand-sub   { font-size: 1rem; color: rgba(255,255,255,.65); text-align: center; max-width: 260px; line-height: 1.5; }
+.login-brand-panel .brand-badge {
+  margin-top: 2.5rem;
+  background: rgba(251,191,36,.15);
+  border: 1px solid rgba(251,191,36,.35);
+  border-radius: 20px;
+  padding: .4rem 1rem;
+  font-size: .8rem;
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+/* Decorative dots */
+.login-brand-panel .brand-dots {
+  display: flex; gap: .5rem; margin-top: 3rem;
+}
+.login-brand-panel .brand-dots span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,.25);
+}
+.login-brand-panel .brand-dots span:first-child { background: #fbbf24; }
+
+.login-form-panel {
+  width: 440px;
+  flex-shrink: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  overflow-y: auto;
+}
+
+.login-form-panel .form-title    { font-size: 1.4rem; font-weight: 700; color: #1c1b18; margin-bottom: .25rem; }
+.login-form-panel .form-subtitle { font-size: .85rem; color: var(--muted); margin-bottom: 1.75rem; }
+.login-form-panel .login-form    { width: 100%; display: flex; flex-direction: column; gap: 1rem; }
+
+.login-demo     { margin-top: 1.5rem; text-align: center; width: 100%; }
 .login-demo p   { font-size: .8rem; color: var(--muted); margin-bottom: .5rem; }
-.demo-chips     { display: flex; gap: .5rem; justify-content: center; }
+.demo-chips     { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
+
+/* Fallback single-column for small screens */
+@media (max-width: 700px) {
+  .login-split        { flex-direction: column; }
+  .login-brand-panel  { padding: 2rem 1.5rem; min-height: 200px; flex: none; }
+  .login-brand-panel h1 { font-size: 1.6rem; }
+  .login-form-panel   { width: 100%; padding: 2rem 1.5rem; }
+}
 
 /* ── Forms ── */
 .field { display: flex; flex-direction: column; gap: .3rem; }

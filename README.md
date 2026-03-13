@@ -1,120 +1,34 @@
-# Canteen Management System - Frontend
+# React + Vite
 
-A React + TypeScript + Vite frontend for the Canteen Management System.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
+Currently, two official plugins are available:
 
-- **Authentication**: Login, register, and role-based access control
-- **Menu Browsing**: View menu items with category filtering
-- **POS System**: Point-of-sale interface for cashiers
-- **Order Management**: Track and manage orders in real-time
-- **Inventory Management**: Monitor and update stock levels
-- **Sales Reports**: Interactive charts and analytics dashboard
-- **Responsive Design**: Works on desktop, tablet, and mobile
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Tech Stack
+## React Compiler
 
-- React 18
-- TypeScript
-- Vite
-- Tailwind CSS
-- React Router DOM
-- Chart.js / React-Chartjs-2
-- Axios
-- React Toastify
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Installation
+## Expanding the ESLint configuration
 
-### Prerequisites
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
-- Node.js 18+
-- npm or yarn
 
-### Setup Instructions
-
-1. Navigate to the frontend folder:
-```bash
-cd canteen-frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Create environment file:
-```bash
+# Backend Setup (Laravel)
+cd canteen-backend
+composer install
+composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan migrate:fresh --seed
 cp .env.example .env
-```
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
 
-4. Update the `.env` file with your API URL:
-```env
-VITE_API_URL=http://localhost:8000/api
-```
-
-5. Start the development server:
-```bash
-npm run dev
-```
-
-The app will be available at `http://localhost:5173`
-
-## Build for Production
-
-```bash
-npm run build
-```
-
-The built files will be in the `dist` folder.
-
-## Default Login Credentials
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@canteen.com | password |
-| Cashier | cashier1@canteen.com | password |
-| Customer | john@example.com | password |
-
-## Project Structure
-
-```
-src/
-├── components/
-│   ├── auth/         # Authentication components
-│   ├── common/       # Common components (Layout, etc.)
-│   ├── dashboard/    # Dashboard components
-│   ├── inventory/    # Inventory components
-│   ├── menu/         # Menu components
-│   └── orders/       # Order components
-├── contexts/
-│   ├── AuthContext.tsx   # Authentication state
-│   └── CartContext.tsx   # Shopping cart state
-├── pages/
-│   ├── Dashboard.tsx
-│   ├── Login.tsx
-│   ├── Menu.tsx
-│   ├── POS.tsx
-│   ├── OrderQueue.tsx
-│   ├── Orders.tsx
-│   ├── Inventory.tsx
-│   ├── Reports.tsx
-│   ├── Users.tsx
-│   ├── Profile.tsx
-│   └── ...
-├── services/
-│   └── api.ts        # API service functions
-├── types/
-│   └── index.ts      # TypeScript interfaces
-└── utils/            # Utility functions
-```
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## License
-
-This project is for educational purposes.
+# Frontend Setup (React)
+cd canteen-frontend
+npm install
+cp .env.example .env
+npm start

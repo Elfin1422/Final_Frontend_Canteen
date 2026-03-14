@@ -59,7 +59,7 @@ export default function Login() {
         <div className="login-brand-panel">
           <span className="brand-icon">🍽️</span>
           <h1>CanteenPOS</h1>
-          <p className="brand-sub">School Canteen Management System for IT15/L Integrative Programming</p>
+          <p className="brand-sub">School Canteen Management System</p>
           <div className="brand-badge">🎓 Log In Here</div>
           <div className="brand-dots">
             <span /><span /><span /><span />

@@ -3,28 +3,34 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/common/Sidebar.jsx';
 import { TopBar } from '../components/common/index.jsx';
 import AdminDashboard  from '../components/dashboard/AdminDashboard.jsx';
-import MenuList  from '../components/menu/MenuList.jsx';
-import MenuForm  from '../components/menu/MenuForm.jsx';
-import InventoryTable from '../components/inventory/InventoryTable.jsx';
-import LowStockAlert  from '../components/inventory/LowStockAlert.jsx';
-import OrderQueue     from '../components/orders/OrderQueue.jsx';
+import MenuList        from '../components/menu/MenuList.jsx';
+import MenuForm        from '../components/menu/MenuForm.jsx';
+import InventoryTable  from '../components/inventory/InventoryTable.jsx';
+import LowStockAlert   from '../components/inventory/LowStockAlert.jsx';
+import OrderQueue      from '../components/orders/OrderQueue.jsx';
+import ReportsPage     from '../components/reports/ReportsPage.jsx';
+import PredictionsPage from '../components/predictions/PredictionsPage.jsx';
+import UserSettings    from '../components/settings/UserSettings.jsx';
 import { api } from '../services/api.js';
-import ReportsPage from '../components/reports/ReportsPage.jsx';
 
 const LINKS = [
-  { to: '/admin/dashboard', icon: '📊', label: 'Dashboard' },
-  { to: '/admin/menu',      icon: '🍱', label: 'Menu'      },
-  { to: '/admin/orders',    icon: '📋', label: 'Orders'    },
-  { to: '/admin/inventory', icon: '📦', label: 'Inventory' },
-  { to: '/admin/reports',   icon: '📈', label: 'Reports'   },
+  { to: '/admin/dashboard',   icon: '📊', label: 'Dashboard'   },
+  { to: '/admin/menu',        icon: '🍱', label: 'Menu'        },
+  { to: '/admin/orders',      icon: '📋', label: 'Orders'      },
+  { to: '/admin/inventory',   icon: '📦', label: 'Inventory'   },
+  { to: '/admin/reports',     icon: '📈', label: 'Reports'     },
+  { to: '/admin/predictions', icon: '🤖', label: 'ML Forecast' },
+  { to: '/admin/settings',    icon: '⚙️',  label: 'Settings'   },
 ];
 
 const TITLES = {
-  '/admin/dashboard': 'Sales Dashboard',
-  '/admin/menu':      'Menu Management',
-  '/admin/orders':    'Order Queue',
-  '/admin/inventory': 'Inventory',
-  '/admin/reports':   'Reports',
+  '/admin/dashboard':   'Sales Dashboard',
+  '/admin/menu':        'Menu Management',
+  '/admin/orders':      'Order Queue',
+  '/admin/inventory':   'Inventory',
+  '/admin/reports':     'Reports',
+  '/admin/predictions': 'ML Demand Forecast',
+  '/admin/settings':    'Account Settings',
 };
 
 function AdminMenu() {
@@ -66,12 +72,14 @@ export default function AdminPage() {
         <TopBar title={title} />
         <div className="page-body">
           <Routes>
-            <Route path="dashboard" element={<><LowStockAlert /><AdminDashboard /></>} />
-            <Route path="menu"      element={<AdminMenu />} />
-            <Route path="orders"    element={<OrderQueue />} />
-            <Route path="inventory" element={<InventoryTable />} />
-            <Route path="reports"   element={<ReportsPage />} />
-            <Route path="*"         element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard"   element={<><LowStockAlert /><AdminDashboard /></>} />
+            <Route path="menu"        element={<AdminMenu />} />
+            <Route path="orders"      element={<OrderQueue />} />
+            <Route path="inventory"   element={<InventoryTable />} />
+            <Route path="reports"     element={<ReportsPage />} />
+            <Route path="predictions" element={<PredictionsPage />} />
+            <Route path="settings"    element={<UserSettings />} />
+            <Route path="*"           element={<Navigate to="dashboard" replace />} />
           </Routes>
         </div>
       </div>

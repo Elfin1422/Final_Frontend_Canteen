@@ -12,7 +12,7 @@ export default function Navbar() {
 
   return (
     <header className="topbar">
-      <div className="topbar-brand">🍽️ CanteenPOS</div>
+      <div className="topbar-brand">🍽️ WisePlate</div>
       <div className="topbar-right">
         {user && (
           <>

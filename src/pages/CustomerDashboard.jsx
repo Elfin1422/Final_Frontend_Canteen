@@ -2,19 +2,22 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from '../components/common/Sidebar.jsx';
 import { TopBar, Badge } from '../components/common/index.jsx';
-import MenuList from '../components/menu/MenuList.jsx';
+import MenuList     from '../components/menu/MenuList.jsx';
 import OrderReceipt from '../components/orders/OrderReceipt.jsx';
+import UserSettings from '../components/settings/UserSettings.jsx';
 import { useCart } from '../context/CartContext.jsx';
 import { orderService } from '../services/orderService.js';
 
 const LINKS = [
-  { to: '/customer/menu',   icon: '🍱', label: 'Menu'      },
-  { to: '/customer/orders', icon: '📋', label: 'My Orders' },
+  { to: '/customer/menu',     icon: '🍱', label: 'Menu'      },
+  { to: '/customer/orders',   icon: '📋', label: 'My Orders' },
+  { to: '/customer/settings', icon: '⚙️',  label: 'Settings'  },
 ];
 
 const TITLES = {
-  '/customer/menu':   'Menu',
-  '/customer/orders': 'My Orders',
+  '/customer/menu':     'Menu',
+  '/customer/orders':   'My Orders',
+  '/customer/settings': 'Account Settings',
 };
 
 function CustomerMenu() {
@@ -139,9 +142,10 @@ export default function CustomerDashboard() {
         <TopBar title={title} />
         <div className="page-body">
           <Routes>
-            <Route path="menu"   element={<CustomerMenu />} />
-            <Route path="orders" element={<MyOrders />} />
-            <Route path="*"      element={<Navigate to="menu" replace />} />
+            <Route path="menu"     element={<CustomerMenu />} />
+            <Route path="orders"   element={<MyOrders />} />
+            <Route path="settings" element={<UserSettings />} />
+            <Route path="*"        element={<Navigate to="menu" replace />} />
           </Routes>
         </div>
       </div>

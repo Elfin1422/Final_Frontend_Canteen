@@ -1,8 +1,7 @@
 /**
  * AuthContext.jsx
  * Global authentication state using React Context API.
- * Stores the current user and Sanctum token in localStorage.
- * Provides login(), logout(), and loading state to all children.
+ * Exposes setUser so profile updates can reflect immediately in the UI.
  */
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService.js';
@@ -19,10 +18,7 @@ export function AuthProvider({ children }) {
       authService
         .me(token)
         .then(setUser)
-        .catch(() => {
-          setToken(null);
-          localStorage.removeItem('token');
-        })
+        .catch(() => { setToken(null); localStorage.removeItem('token'); })
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -45,7 +41,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, token, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -61,7 +61,7 @@ export default function Register() {
         {/* ── Left: Maroon brand panel ── */}
         <div className="login-brand-panel">
           <span className="brand-icon">🍽️</span>
-          <h1>CanteenPOS</h1>
+          <h1>WisePlate</h1>
           <p className="brand-sub">Join the school canteen system and order your favorite meals online.</p>
           <div className="brand-badge">👤 Customer Registration</div>
           <div className="brand-dots">

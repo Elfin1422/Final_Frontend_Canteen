@@ -14,7 +14,7 @@ export default function Sidebar({ links }) {
     <aside className="sidebar">
       <div className="sidebar-brand">
         <span>🍽️</span>
-        <span>CanteenPOS</span>
+        <span>WisePlate</span>
       </div>
 
       <div className="sidebar-user">

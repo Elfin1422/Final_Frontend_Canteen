@@ -58,7 +58,7 @@ export default function Login() {
         {/* ── Left: Maroon brand panel ── */}
         <div className="login-brand-panel">
           <span className="brand-icon">🍽️</span>
-          <h1>CanteenPOS</h1>
+          <h1>WisePlate</h1>
           <p className="brand-sub">School Canteen Management System</p>
           <div className="brand-badge">🎓 Log In Here</div>
           <div className="brand-dots">

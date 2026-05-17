@@ -1,0 +1,89 @@
+/* ── Predictions / ML Forecast page ── */
+.predictions-page { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.pred-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 1rem;
+}
+.pred-title    { font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: .25rem; }
+.pred-subtitle { font-size: .82rem; color: var(--muted); }
+
+/* ── Metric cards ── */
+.pred-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+.pred-metric-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem 1.1rem;
+  display: flex; align-items: center; gap: .75rem;
+  border-left: 4px solid var(--sidebar-bg);
+}
+.pred-metric-icon  { font-size: 1.5rem; }
+.pred-metric-value { font-size: 1.2rem; font-weight: 700; line-height: 1.2; }
+.pred-metric-label { font-size: .75rem; color: var(--muted); }
+.pred-metric-sub   { font-size: .7rem; color: var(--muted); }
+
+/* ── Advice cards ── */
+.pred-advice-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.pred-advice-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.1rem 1.25rem;
+  border-left: 5px solid #ccc;
+  display: flex; gap: 1rem; align-items: flex-start;
+}
+.pred-advice-rank {
+  font-size: 1.1rem; font-weight: 800; color: var(--muted);
+  min-width: 28px; text-align: center; padding-top: .1rem;
+}
+.pred-advice-body  { flex: 1; }
+.pred-advice-name  { font-size: 1rem; font-weight: 700; margin-bottom: .1rem; }
+.pred-advice-cat   { font-size: .78rem; color: var(--muted); margin-bottom: .4rem; }
+.pred-advice-meta  { display: flex; gap: .75rem; align-items: center; margin-bottom: .5rem; font-size: .8rem; color: var(--muted); }
+.pred-advice-text  { font-size: .85rem; color: var(--text); margin-bottom: .75rem; line-height: 1.5; }
+
+.pred-advice-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: .5rem; background: var(--bg);
+  border-radius: 8px; padding: .6rem .75rem;
+}
+.pred-stat       { display: flex; flex-direction: column; gap: .15rem; }
+.pred-stat-label { font-size: .7rem; color: var(--muted); }
+.pred-stat-val   { font-size: .85rem; font-weight: 600; }
+
+/* ── Urgency badge ── */
+.pred-urgency-badge {
+  display: inline-block;
+  padding: .15rem .55rem;
+  border-radius: 20px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+/* ── Chart card ── */
+.pred-chart-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+}
+.pred-chart-card h4    { font-size: .95rem; font-weight: 700; margin-bottom: .25rem; }
+.pred-chart-sub        { font-size: .78rem; color: var(--muted); margin-bottom: 1rem; }
+
+/* ── Error state ── */
+.pred-error {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1rem; padding: 3rem; color: var(--muted); text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .pred-advice-stats { grid-template-columns: repeat(2, 1fr); }
+  .pred-metrics-row  { grid-template-columns: repeat(2, 1fr); }
+}
